@@ -1,6 +1,6 @@
 /**
- * MHM SOLUTIONS — Après Mon Bac (MVP1)
- * Carousel d'introduction en 5 étapes avec préchargement, autoplay, pause et respect du prefers-reduced-motion
+ * MHM SOLUTIONS — Après Mon Bac
+ * Carousel d'introduction en 4 étapes clés du parcours bachelier
  * Créateur : Hilarus GBAGOULE
  */
 
@@ -14,7 +14,6 @@ import {
   Target,
   BarChart3,
   ListOrdered,
-  BellRing,
   ArrowRight,
 } from 'lucide-react';
 
@@ -35,72 +34,44 @@ interface CarouselStep {
 const CAROUSEL_STEPS: CarouselStep[] = [
   {
     id: 1,
-    title: '1. Je renseigne mon profil',
-    subtitle: 'Série, mention et préférences',
+    title: '1. Renseigner son profil',
+    subtitle: 'Série de BAC, mention et centres d’intérêt',
     description:
-      'Indique ta série de BAC (D, C, A, B, E...), ta mention obtenue et tes affinités. L’algorithme calibre instantanément les débouchés adaptés à ton cursus.',
+      'Indiquez votre série de BAC (A, B, C, D, E...), votre mention et vos priorités pour repérer immédiatement les filières en adéquation avec votre parcours académique.',
     icon: UserCheck,
     accentColor: 'from-blue-600 to-indigo-600',
-    badgeText: 'Étape Fondatrice',
+    badgeText: 'Étape 1 • Profil & Objectif',
     previewGraphic: {
       tag: 'Profil Académique',
-      details: ['Série D / C / A / B / E', 'Mention Passable à Très Bien', 'Compatibilité directe'],
+      details: ['Série & Mention obtenues', 'Matières dominantes', 'Filtres personnalisés'],
     },
   },
   {
     id: 2,
-    title: '2. Je choisis mon objectif',
-    subtitle: 'Bourse ou parcours carrière',
+    title: '2. Comparer et suivre',
+    subtitle: 'Adéquation, jauges et évolution des rangs',
     description:
-      'Définis ta priorité numéro 1 : maximiser tes opportunités de financement (bourses/allocations) ou cibler un métier d’avenir précis sans compromis.',
-    icon: Target,
+      'Consultez les filières classées selon vos critères, observez l’évolution des positions et repérez les options les plus cohérentes avec vos chances réelles.',
+    icon: BarChart3,
     accentColor: 'from-rose-500 to-amber-500',
-    badgeText: 'Stratégie Personnalisée',
+    badgeText: 'Étape 2 • Comparaison & Suivi',
     previewGraphic: {
-      tag: 'Double Voie',
-      details: ['Priorité Bourse & Sécurité', 'Parcours Métier & Passion', 'Pondération intelligente'],
+      tag: 'Visibilité & Jauges',
+      details: ['Universités nationales (UAC, UNA...)', 'Suivi des tendances de sélection', 'Pondération Bourse ou Carrière'],
     },
   },
   {
     id: 3,
-    title: '3. Je compare les possibilités',
-    subtitle: 'Jauges, bourses et concurrence',
+    title: '3. Valider son choix soi-même',
+    subtitle: 'Décision sereine, documentée et autonome',
     description:
-      'Visualise pour chaque filière le ratio d’admis boursiers, la tension de concurrence et l’adéquation réelle avec les exigences du marché de l’emploi.',
-    icon: BarChart3,
-    accentColor: 'from-emerald-500 to-teal-600',
-    badgeText: 'Analyse Claire',
-    previewGraphic: {
-      tag: 'Indicateurs Transparents',
-      details: ['Ratio bourses estimé (ex: 67%)', 'Indice de sélectivité', 'Données de démonstration MVP1'],
-    },
-  },
-  {
-    id: 4,
-    title: '4. Je construis ma shortlist',
-    subtitle: 'Les options les plus adaptées',
-    description:
-      'Retiens les 3 à 5 meilleures filières correspondant à ta stratégie. Classe-les en vue de tes choix définitifs sur les plateformes universitaires officielles.',
+      'Préparez une sélection ordonnée de vos meilleurs vœux, que vous saisissez personnellement en toute confiance sur la plateforme officielle d’orientation.',
     icon: ListOrdered,
-    accentColor: 'from-indigo-600 to-purple-600',
-    badgeText: 'Prise de Décision',
+    accentColor: 'from-emerald-500 to-teal-600',
+    badgeText: 'Étape 3 • Validation Autonome',
     previewGraphic: {
-      tag: 'Sélection Finale',
-      details: ['Recommandations par affinité', 'Fiches filières détaillées', 'Validation sereine'],
-    },
-  },
-  {
-    id: 5,
-    title: '5. Je suis les évolutions',
-    subtitle: 'Les données pourront être actualisées plus tard',
-    description:
-      'Une architecture prête à accueillir les futures synchronisations de jauges en direct, l’extension Chrome MHM et les flux automatisés n8n.',
-    icon: BellRing,
-    accentColor: 'from-cyan-600 to-blue-700',
-    badgeText: 'Évolutif & Connecté',
-    previewGraphic: {
-      tag: 'Phases Suivantes',
-      details: ['Extension Chrome dédiée', 'Workflows n8n préparés', 'Alertes en temps réel'],
+      tag: 'Shortlist Finale',
+      details: ['Vœux classés par ordre stratégique', 'Fiches filières complètes', 'Saisie manuelle sur le portail officiel'],
     },
   },
 ];
@@ -154,7 +125,7 @@ export const HeroCarousel: React.FC<HeroCarouselProps> = ({ onStartOnboarding })
         <div className="flex items-center justify-between border-b border-slate-800 pb-4 mb-6">
           <div className="flex items-center gap-2">
             <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-rose-500/20 text-rose-300 border border-rose-500/30">
-              La Méthode MHM SOLUTIONS en 5 étapes
+              Comment Après mon Bac vous aide en 3 étapes
             </span>
           </div>
 
@@ -214,11 +185,11 @@ export const HeroCarousel: React.FC<HeroCarouselProps> = ({ onStartOnboarding })
                   </div>
                   <div>
                     <div className="text-xs font-bold text-slate-200">{step.previewGraphic.tag}</div>
-                    <div className="text-[11px] text-slate-400">Aperçu interactif</div>
+                    <div className="text-[11px] text-slate-400">Guide méthodologique</div>
                   </div>
                 </div>
                 <span className="text-xs font-mono font-bold text-slate-400 bg-slate-800 px-2 py-0.5 rounded">
-                  0{step.id}/05
+                  0{step.id}/03
                 </span>
               </div>
 

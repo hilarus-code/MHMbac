@@ -103,7 +103,41 @@ export const AboutPage: React.FC<AboutPageProps> = ({ navigate }) => {
         </div>
 
         {/* ========================================================================= */}
-        {/* 3. CE QUE LA PLATEFORME APPORTE                                           */}
+        {/* 3. LES PROBLÈMES IDENTIFIÉS & NOTRE RÉPONSE                               */}
+        {/* ========================================================================= */}
+        <div className="space-y-6">
+          <div className="text-center max-w-2xl mx-auto space-y-2">
+            <span className="text-xs font-bold uppercase tracking-wider text-rose-500">
+              Pourquoi nous existons
+            </span>
+            <h2 className="text-2xl sm:text-3xl font-serif font-bold text-slate-900 dark:text-white">
+              Répondre aux défis majeurs de l’orientation
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {MHM_PROMOTION_CONFIG.problems.map((p, idx) => (
+              <div
+                key={idx}
+                className="p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-2"
+              >
+                <div className="flex items-center gap-2 font-bold text-sm text-slate-900 dark:text-white">
+                  <span className="w-2 h-2 rounded-full bg-rose-500" />
+                  <h3>{p.title}</h3>
+                </div>
+                <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+                  {p.description}
+                </p>
+                <div className="text-[11px] font-semibold text-rose-600 dark:text-rose-400">
+                  {p.impact}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* ========================================================================= */}
+        {/* 4. CE QUE LA PLATEFORME APPORTE                                           */}
         {/* ========================================================================= */}
         <div className="p-8 sm:p-10 rounded-3xl bg-slate-900 text-white border border-slate-800 space-y-6 shadow-xl">
           <div>
@@ -129,7 +163,7 @@ export const AboutPage: React.FC<AboutPageProps> = ({ navigate }) => {
         </div>
 
         {/* ========================================================================= */}
-        {/* 4. COORDONNÉES OFFICIELLES & RÉSEAUX SOCIAUX                               */}
+        {/* 5. COORDONNÉES OFFICIELLES & RÉSEAUX SOCIAUX                               */}
         {/* ========================================================================= */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           
@@ -212,7 +246,7 @@ export const AboutPage: React.FC<AboutPageProps> = ({ navigate }) => {
         </div>
 
         {/* ========================================================================= */}
-        {/* 5. FORMULAIRE DE CONTACT (PRÊT POUR RELIURE FUTURE)                       */}
+        {/* 6. FORMULAIRE DE CONTACT                                                  */}
         {/* ========================================================================= */}
         <div className="p-8 sm:p-10 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm space-y-6">
           <div>
@@ -220,7 +254,7 @@ export const AboutPage: React.FC<AboutPageProps> = ({ navigate }) => {
               Nous contacter / Poser une question
             </h2>
             <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
-              Ce formulaire est prêt pour être relié à notre passerelle de messagerie (n8n / Supabase Edge Functions).
+              Notre équipe d'orientation est à votre écoute pour toute question relative à votre parcours.
             </p>
           </div>
 

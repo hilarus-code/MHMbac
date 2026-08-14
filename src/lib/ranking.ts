@@ -1,48 +1,47 @@
 /**
- * MHM SOLUTIONS — Après Mon Bac (MVP1)
- * Algorithme de classement et d'adéquation (Fonction pure & testable)
+ * MHM SOLUTIONS — Après Mon Bac (v1)
+ * Algorithme déterministe de Score d'Opportunité (Fonction pure, documentée & versionnée)
  * Créateur : Hilarus GBAGOULE
+ * 
+ * Version de l'algorithme : v1
+ * Règle d'or : Ce score aide à comparer les options ; il ne garantit ni admission ni bourse.
  */
 
 import {
   BacMention,
   BacSeries,
   DemoProgramme,
+  OpportunityScoreDetails,
   PrimaryGoal,
+  RiskTolerance,
   ScoredProgramme,
+  ScoreFactor,
   UserPreferences,
   UserProfile,
 } from '../types/orientation';
 
-export interface RankingWeights {
-  scholarshipWeight: number; // 0 à 1
-  careerWeight: number;      // 0 à 1
-  competitionWeight: number; // 0 à 1
-}
-
 /**
- * Calcule l'adéquation d'une série avec une filière
+ * Calcule l'adéquation d'une série avec une filière (0 à 100)
  */
 export function calculateSeriesCompatibility(
   series: BacSeries | null | undefined,
   admissibleSeries: BacSeries[]
 ): { score: number; isAdmissible: boolean; note: string } {
   if (!series) {
-    return { score: 70, isAdmissible: true, note: 'Série non spécifiée' };
+    return { score: 65, isAdmissible: true, note: 'Série non renseignée (hypothèse standard)' };
   }
 
   const index = admissibleSeries.indexOf(series);
   if (index === 0) {
-    return { score: 100, isAdmissible: true, note: 'Série prioritaire idéale' };
+    return { score: 100, isAdmissible: true, note: `Série ${series} prioritaire pour cette formation` };
   } else if (index > 0) {
-    // Admissible mais après la série reine
-    const score = Math.max(65, 95 - index * 10);
-    return { score, isAdmissible: true, note: 'Série compatible et acceptée' };
+    const score = Math.max(60, 95 - index * 10);
+    return { score, isAdmissible: true, note: `Série ${series} compatible et recevable (rang ${index + 1})` };
   } else if (series === 'Autre') {
-    return { score: 50, isAdmissible: true, note: 'Étude sur dossier requise' };
+    return { score: 45, isAdmissible: true, note: 'Série alternative soumise à équivalence ou dossier' };
   }
 
-  return { score: 20, isAdmissible: false, note: 'Série non recommandée pour cette filière' };
+  return { score: 15, isAdmissible: false, note: `Série ${series} non prioritaire / hors cursus direct` };
 }
 
 /**
@@ -63,143 +62,300 @@ export function getMentionBonus(mention: BacMention | null | undefined): number 
 }
 
 /**
- * Calcule le score d'opportunité de bourse (0 à 100)
+ * Calcule le score bourse (0 à 100) basé sur les jauges de bourse observées
  */
 export function calculateScholarshipScore(programme: DemoProgramme): number {
-  const ratio = programme.demoStats.scholarshipRatio; // ex: 0.72
-  const compScore = programme.demoStats.competitionScore; // 1 à 10 (10 = hyper concurrentiel)
+  const ratio = programme.liveStats.scholarshipRatio; // ex: 0.46
+  const compScore = programme.liveStats.competitionScore; // 1 à 10
 
-  // Plus le ratio de bourse est élevé et moins la concurrence est rude, plus le score est haut
-  const ratioScore = Math.min(100, Math.round(ratio * 100));
-  const compEaseBonus = (10 - compScore) * 3; // 0 à 27 points
+  // Trouver la jauge spécifique des bourses nationales si disponible
+  const bourseCategory = programme.liveStats.categories.find(
+    (c) => c.category === 'Bourses Nationales'
+  );
 
-  return Math.min(100, Math.max(0, Math.round(ratioScore * 0.75 + compEaseBonus)));
+  let categoryAvailabilityBonus = 0;
+  if (bourseCategory) {
+    const freeSlots = Math.max(0, bourseCategory.availableTotal - bourseCategory.allocated);
+    categoryAvailabilityBonus = freeSlots > 5 ? 10 : freeSlots > 0 ? 5 : 0;
+  }
+
+  const baseRatioScore = Math.min(100, Math.round(ratio * 100));
+  const compEaseBonus = (10 - compScore) * 2.5; // 0 à 22.5
+
+  const rawScore = baseRatioScore * 0.7 + compEaseBonus + categoryAvailabilityBonus;
+  return Math.min(100, Math.max(0, Math.round(rawScore)));
 }
 
 /**
- * Calcule le score d'adéquation de carrière / domaine (0 à 100)
+ * Calcule le score d'admission observée (0 à 100)
+ */
+export function calculateObservedAdmissionScore(
+  programme: DemoProgramme,
+  seriesScore: number,
+  mentionBonus: number,
+  riskTolerance: RiskTolerance
+): number {
+  const compScore = programme.liveStats.competitionScore; // 10 = max pression
+  
+  // Facteur de pression observée
+  const capacity = programme.liveStats.totalCapacity;
+  const applicants = programme.liveStats.totalObservedApplicants;
+  const pressureRatio = applicants > 0 && capacity > 0 ? applicants / capacity : 1.5;
+
+  let pressureDeduction = 0;
+  if (pressureRatio > 3.0) {
+    pressureDeduction = 25;
+  } else if (pressureRatio > 2.0) {
+    pressureDeduction = 15;
+  } else if (pressureRatio > 1.0) {
+    pressureDeduction = 5;
+  }
+
+  let riskMod = 0;
+  if (riskTolerance === 'prudente') {
+    riskMod = compScore >= 8 ? -10 : +5;
+  } else if (riskTolerance === 'ambitieuse') {
+    riskMod = compScore >= 8 ? +5 : 0;
+  }
+
+  const rawAdmission = seriesScore * 0.55 + mentionBonus * 1.5 - pressureDeduction + riskMod + (10 - compScore) * 2;
+  return Math.min(100, Math.max(10, Math.round(rawAdmission)));
+}
+
+/**
+ * Calcule le score d'adéquation métier (0 à 100 ou null)
  */
 export function calculateCareerScore(
   programme: DemoProgramme,
   careerKeywords: string[]
-): { score: number; matchedKeywords: string[] } {
+): { score: number | null; matchedKeywords: string[] } {
   if (!careerKeywords || careerKeywords.length === 0) {
-    return { score: 60, matchedKeywords: [] };
+    return { score: null, matchedKeywords: [] };
   }
 
   const matchedKeywords: string[] = [];
-  const normalizedProg = `${programme.programme} ${programme.domain} ${programme.school} ${programme.demoStats.sampleCareers.join(' ')}`.toLowerCase();
+  const normalizedText = `${programme.programme} ${programme.domain} ${programme.school} ${programme.liveStats.sampleCareers.join(' ')}`.toLowerCase();
 
   for (const keyword of careerKeywords) {
     const normKw = keyword.trim().toLowerCase();
-    if (normKw && normalizedProg.includes(normKw)) {
+    if (normKw && normalizedText.includes(normKw)) {
       matchedKeywords.push(keyword);
     }
   }
 
   if (matchedKeywords.length >= 2) {
-    return { score: 98, matchedKeywords };
+    return { score: 96, matchedKeywords };
   } else if (matchedKeywords.length === 1) {
-    return { score: 88, matchedKeywords };
+    return { score: 85, matchedKeywords };
   }
 
-  // Vérifier si le domaine général a des racines communes
   const hasPartialDomain = careerKeywords.some((kw) =>
     programme.domain.toLowerCase().includes(kw.toLowerCase().slice(0, 4))
   );
 
   return {
-    score: hasPartialDomain ? 70 : 40,
+    score: hasPartialDomain ? 65 : 35,
     matchedKeywords,
   };
 }
 
 /**
- * Fonction PURE principale de calcul des scores et de tri des filières
+ * Évalue le niveau de confiance des données
+ */
+export function evaluateConfidence(
+  programme: DemoProgramme
+): { level: 'Élevé' | 'Moyen' | 'Limité'; reason: string; missing: string[] } {
+  const missing: string[] = [];
+  const freshness = programme.liveStats.freshnessMinutes;
+
+  if (programme.liveStats.categories.length === 0) {
+    missing.push('Détail des sous-catégories de jauges non disponible');
+  }
+  if (!programme.liveStats.observableRank) {
+    missing.push('Rang observable non synchronisé');
+  }
+
+  if (freshness <= 15 && missing.length === 0) {
+    return {
+      level: 'Élevé',
+      reason: `Données fraîches (${freshness} min) et jauges catégorielles complètes.`,
+      missing,
+    };
+  } else if (freshness <= 60 && missing.length <= 1) {
+    return {
+      level: 'Moyen',
+      reason: `Collecte récente (${freshness} min), mise à jour recommandée avant arbitrage.`,
+      missing,
+    };
+  }
+
+  return {
+    level: 'Limité',
+    reason: `Données observées datant de plus d'une heure ou incomplètes (${missing.length} éléments manquants).`,
+    missing,
+  };
+}
+
+/**
+ * Fonction PURE principale de calcul déterministe du Score d'Opportunité v1
  */
 export function rankProgrammes(
   programmes: DemoProgramme[],
   profile: Partial<UserProfile> | null,
   preferences: Partial<UserPreferences> | null
 ): ScoredProgramme[] {
-  const goal: PrimaryGoal = preferences?.primary_goal || 'carriere';
+  const goal: PrimaryGoal = preferences?.primary_goal || 'explorer';
   const series: BacSeries = (profile?.series as BacSeries) || 'D';
   const mention: BacMention = (profile?.mention as BacMention) || 'Assez bien';
+  const riskTolerance: RiskTolerance = preferences?.risk_tolerance || 'equilibree';
   const keywords = preferences?.career_keywords || [];
-
-  // Poids adaptatifs selon l'objectif choisi
-  const isBourse = goal === 'bourse';
-  const weightScholarship = isBourse ? 0.50 : 0.20;
-  const weightCareer = isBourse ? 0.20 : 0.50;
-  const weightSeries = 0.30;
 
   const mentionBonus = getMentionBonus(mention);
 
-  const scoredList: ScoredProgramme[] = programmes.map((prog) => {
-    const seriesEval = calculateSeriesCompatibility(series, prog.admissibleSeries);
-    const scholarshipScore = calculateScholarshipScore(prog);
-    const careerEval = calculateCareerScore(prog, keywords);
+  return programmes
+    .map((prog) => {
+      const seriesEval = calculateSeriesCompatibility(series, prog.admissibleSeries);
+      const scholarshipScore = calculateScholarshipScore(prog);
+      const careerEval = calculateCareerScore(prog, keywords);
+      const observedAdmissionScore = calculateObservedAdmissionScore(
+        prog,
+        seriesEval.score,
+        mentionBonus,
+        riskTolerance
+      );
+      const competitionIndex = Math.min(100, Math.round(prog.liveStats.competitionScore * 10));
 
-    // Score brut pondéré
-    let rawScore =
-      seriesEval.score * weightSeries +
-      scholarshipScore * weightScholarship +
-      careerEval.score * weightCareer;
+      // Pondérations déterministes selon l'objectif principal
+      let wAdmission = 0.35;
+      let wScholarship = 0.25;
+      let wCareer = 0.25;
+      let wCompetitionEase = 0.15;
 
-    // Bonus de mention appliqué si la série est admissible
-    if (seriesEval.isAdmissible) {
-      rawScore += mentionBonus;
-    }
-
-    const finalScore = Math.min(100, Math.max(10, Math.round(rawScore)));
-
-    // Raisons explicatives pour la transparence
-    const reasons: string[] = [];
-    reasons.push(seriesEval.note);
-
-    if (isBourse) {
-      if (prog.demoStats.scholarshipRatio >= 0.55) {
-        reasons.push(`Ratio de bourses favorable (${Math.round(prog.demoStats.scholarshipRatio * 100)}% d’admis boursiers simulés).`);
+      if (goal === 'bourse') {
+        wScholarship = 0.50;
+        wAdmission = 0.25;
+        wCareer = careerEval.score !== null ? 0.15 : 0.05;
+        wCompetitionEase = 0.10;
+      } else if (goal === 'securite') {
+        wAdmission = 0.45;
+        wCompetitionEase = 0.35;
+        wScholarship = 0.10;
+        wCareer = careerEval.score !== null ? 0.10 : 0.05;
+      } else if (goal === 'carriere') {
+        wCareer = 0.45;
+        wAdmission = 0.30;
+        wScholarship = 0.15;
+        wCompetitionEase = 0.10;
       } else {
-        reasons.push(`Filière sélective sur bourses (${Math.round(prog.demoStats.scholarshipRatio * 100)}% de bourses simulées).`);
+        // Mode 'explorer' (équilibré)
+        wAdmission = 0.35;
+        wScholarship = 0.30;
+        wCareer = careerEval.score !== null ? 0.20 : 0.0;
+        wCompetitionEase = 0.15;
       }
-    } else {
+
+      const effectiveCareerScore = careerEval.score ?? 50;
+      const competitionEaseScore = 100 - competitionIndex;
+
+      let rawOpportunityScore =
+        observedAdmissionScore * wAdmission +
+        scholarshipScore * wScholarship +
+        effectiveCareerScore * wCareer +
+        competitionEaseScore * wCompetitionEase;
+
+      const opportunityScore = Math.min(100, Math.max(10, Math.round(rawOpportunityScore)));
+
+      // Évaluation de la confiance
+      const confidence = evaluateConfidence(prog);
+
+      // Facteurs explicatifs pour la transparence (« Pourquoi ce score ? »)
+      const factors: ScoreFactor[] = [
+        {
+          name: 'Compatibilité de série',
+          impact: seriesEval.isAdmissible ? 'positif' : 'attention',
+          weight: Math.round(wAdmission * 100),
+          description: seriesEval.note,
+        },
+        {
+          name: 'Disponibilité bourses & aides',
+          impact: scholarshipScore >= 60 ? 'positif' : scholarshipScore >= 40 ? 'neutre' : 'attention',
+          weight: Math.round(wScholarship * 100),
+          description: `${Math.round(prog.liveStats.scholarshipRatio * 100)}% de ratio estimé avec ${prog.liveStats.estimatedScholarships} bourses observées.`,
+        },
+        {
+          name: 'Pression de concurrence',
+          impact: competitionIndex >= 75 ? 'attention' : competitionIndex >= 50 ? 'neutre' : 'positif',
+          weight: Math.round(wCompetitionEase * 100),
+          description: `Niveau ${prog.liveStats.competitionLevel} (${prog.liveStats.totalObservedApplicants} postulants observés pour ${prog.liveStats.totalCapacity} places).`,
+        },
+      ];
+
+      if (careerEval.score !== null) {
+        factors.push({
+          name: 'Adéquation métier / carrière',
+          impact: careerEval.score >= 70 ? 'positif' : 'neutre',
+          weight: Math.round(wCareer * 100),
+          description:
+            careerEval.matchedKeywords.length > 0
+              ? `Correspondance avec vos cibles : ${careerEval.matchedKeywords.join(', ')}`
+              : `Filière du domaine ${prog.domain}`,
+        });
+      }
+
+      // Raisons résumées
+      const reasons: string[] = [seriesEval.note];
+      if (scholarshipScore >= 65) {
+        reasons.push(`Ratio de bourses très favorable (${Math.round(prog.liveStats.scholarshipRatio * 100)}%).`);
+      }
       if (careerEval.matchedKeywords.length > 0) {
-        reasons.push(`Correspondance directe avec tes métiers cibles : ${careerEval.matchedKeywords.join(', ')}.`);
-      } else {
-        reasons.push(`Filière générale du domaine ${prog.domain}.`);
+        reasons.push(`Aligné avec : ${careerEval.matchedKeywords.join(', ')}.`);
       }
-    }
+      if (prog.liveStats.competitionScore <= 5) {
+        reasons.push(`Pression concurrentielle modérée (${prog.liveStats.competitionLevel}).`);
+      }
 
-    if (prog.demoStats.competitionLevel === 'Faible' || prog.demoStats.competitionLevel === 'Modéré') {
-      reasons.push(`Niveau de concurrence modéré (${prog.demoStats.competitionLevel}).`);
-    }
+      // Badge
+      let badge: ScoredProgramme['badge'] = {
+        label: 'Opportunité Équilibrée',
+        variant: 'indigo',
+      };
 
-    // Détermination du badge
-    let badge: ScoredProgramme['badge'] = {
-      label: 'Option Recommandée',
-      variant: 'indigo',
-    };
+      if (goal === 'bourse' && scholarshipScore >= 70) {
+        badge = { label: 'Forte Opportunité Bourse', variant: 'emerald' };
+      } else if (goal === 'securite' && competitionIndex <= 45) {
+        badge = { label: 'Choix Sécurisé / Accessible', variant: 'emerald' };
+      } else if (goal === 'carriere' && (careerEval.score ?? 0) >= 85) {
+        badge = { label: 'Alignement Métier Optimal', variant: 'rose' };
+      } else if (competitionIndex >= 85) {
+        badge = { label: 'Filière Très Convoitée', variant: 'amber' };
+      }
 
-    if (isBourse && prog.demoStats.scholarshipRatio >= 0.60) {
-      badge = { label: 'Opportunité Bourse Forte', variant: 'emerald' };
-    } else if (!isBourse && careerEval.score >= 85) {
-      badge = { label: 'Métier Cible Privilégié', variant: 'rose' };
-    } else if (prog.demoStats.competitionScore >= 8) {
-      badge = { label: 'Filière Très Sélective', variant: 'amber' };
-    }
+      const scoreDetails: OpportunityScoreDetails = {
+        scoreVersion: 'v1',
+        opportunityScore,
+        scholarshipScore,
+        observedAdmissionScore,
+        careerScore: careerEval.score,
+        competitionIndex,
+        confidenceLevel: confidence.level,
+        confidenceReason: confidence.reason,
+        collectedAt: prog.liveStats.lastUpdatedAt,
+        freshnessText: `Mis à jour il y a ${prog.liveStats.freshnessMinutes} minutes`,
+        factors,
+        missingData: confidence.missing,
+      };
 
-    return {
-      programme: prog,
-      score: finalScore,
-      compatibilityScore: seriesEval.score,
-      scholarshipScore,
-      careerScore: careerEval.score,
-      badge,
-      reasons,
-    };
-  });
-
-  // Tri décroissant par score
-  return scoredList.sort((a, b) => b.score - a.score);
+      return {
+        programme: prog,
+        score: opportunityScore,
+        scoreDetails,
+        compatibilityScore: seriesEval.score,
+        scholarshipScore,
+        careerScore: effectiveCareerScore,
+        badge,
+        reasons,
+      };
+    })
+    .sort((a, b) => b.score - a.score);
 }
+

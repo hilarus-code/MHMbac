@@ -89,8 +89,12 @@ export const DEMO_PROGRAMMES: DemoProgramme[] = [
     description: 'Formation d’élite pour concevoir et déployer des architectures logicielles modernes, applications web/mobiles et bases de données robustes.',
     admissibleSeries: ['C', 'D', 'E', 'B'],
     is_demo: true,
-    demoStats: {
-      estimatedCapacity: 120,
+    liveStats: {
+      lastUpdatedAt: new Date(Date.now() - 14 * 60 * 1000).toISOString(),
+      freshnessMinutes: 14,
+      observableRank: 42,
+      totalObservedApplicants: 310,
+      totalCapacity: 120,
       estimatedScholarships: 55,
       scholarshipRatio: 0.46,
       competitionLevel: 'Élevé',
@@ -99,6 +103,12 @@ export const DEMO_PROGRAMMES: DemoProgramme[] = [
       marketDemand: 'Forte',
       keySubjects: ['Mathématiques', 'Algorithmique', 'Logique'],
       sampleCareers: ['Développeur Full-Stack', 'Architecte Logiciel', 'Ingénieur DevOps'],
+      categories: [
+        { category: 'Bourses Nationales', allocated: 48, availableTotal: 55, applicantsCount: 165, pressureRatio: 0.87 },
+        { category: 'Demi-Bourses / Aides', allocated: 25, availableTotal: 30, applicantsCount: 75, pressureRatio: 0.83 },
+        { category: 'Frais d’Études / Payant', allocated: 30, availableTotal: 35, applicantsCount: 70, pressureRatio: 0.86 },
+        { category: 'Total Général', allocated: 103, availableTotal: 120, applicantsCount: 310, pressureRatio: 0.86 },
+      ],
     },
   },
   {
@@ -110,8 +120,12 @@ export const DEMO_PROGRAMMES: DemoProgramme[] = [
     description: 'Spécialisation en gestion d’exploitations modernes, chaînes de valeur agricoles, finance rurale et entrepreneuriat vert.',
     admissibleSeries: ['D', 'C', 'B', 'A'],
     is_demo: true,
-    demoStats: {
-      estimatedCapacity: 90,
+    liveStats: {
+      lastUpdatedAt: new Date(Date.now() - 22 * 60 * 1000).toISOString(),
+      freshnessMinutes: 22,
+      observableRank: 18,
+      totalObservedApplicants: 135,
+      totalCapacity: 90,
       estimatedScholarships: 60,
       scholarshipRatio: 0.67,
       competitionLevel: 'Modéré',
@@ -120,6 +134,12 @@ export const DEMO_PROGRAMMES: DemoProgramme[] = [
       marketDemand: 'Forte',
       keySubjects: ['SVT', 'Économie', 'Statistiques'],
       sampleCareers: ['Manager d’Entreprise Agricole', 'Analyste Chaîne de Valeur', 'Chef de Projet Rural'],
+      categories: [
+        { category: 'Bourses Nationales', allocated: 42, availableTotal: 60, applicantsCount: 85, pressureRatio: 0.70 },
+        { category: 'Demi-Bourses / Aides', allocated: 14, availableTotal: 18, applicantsCount: 28, pressureRatio: 0.78 },
+        { category: 'Frais d’Études / Payant', allocated: 8, availableTotal: 12, applicantsCount: 22, pressureRatio: 0.67 },
+        { category: 'Total Général', allocated: 64, availableTotal: 90, applicantsCount: 135, pressureRatio: 0.71 },
+      ],
     },
   },
   {
@@ -131,8 +151,12 @@ export const DEMO_PROGRAMMES: DemoProgramme[] = [
     description: 'Étude des structures, calcul des ponts et chaussées, résistance des matériaux et gestion de chantiers d’infrastructures.',
     admissibleSeries: ['C', 'D', 'E'],
     is_demo: true,
-    demoStats: {
-      estimatedCapacity: 75,
+    liveStats: {
+      lastUpdatedAt: new Date(Date.now() - 8 * 60 * 1000).toISOString(),
+      freshnessMinutes: 8,
+      observableRank: 65,
+      totalObservedApplicants: 290,
+      totalCapacity: 75,
       estimatedScholarships: 32,
       scholarshipRatio: 0.43,
       competitionLevel: 'Très élevé',
@@ -141,6 +165,12 @@ export const DEMO_PROGRAMMES: DemoProgramme[] = [
       marketDemand: 'Forte',
       keySubjects: ['Physique-Chimie', 'Mathématiques', 'Mécanique'],
       sampleCareers: ['Ingénieur Travaux', 'Chef de Projet BTP', 'Expert Contrôle Technique'],
+      categories: [
+        { category: 'Bourses Nationales', allocated: 30, availableTotal: 32, applicantsCount: 180, pressureRatio: 0.94 },
+        { category: 'Demi-Bourses / Aides', allocated: 19, availableTotal: 20, applicantsCount: 65, pressureRatio: 0.95 },
+        { category: 'Frais d’Études / Payant', allocated: 21, availableTotal: 23, applicantsCount: 45, pressureRatio: 0.91 },
+        { category: 'Total Général', allocated: 70, availableTotal: 75, applicantsCount: 290, pressureRatio: 0.93 },
+      ],
     },
   },
   {
@@ -152,8 +182,12 @@ export const DEMO_PROGRAMMES: DemoProgramme[] = [
     description: 'Techniques bancaires, analyse financière des entreprises, gestion des risques et microfinance adaptée au contexte régional.',
     admissibleSeries: ['B', 'C', 'D', 'Autre'],
     is_demo: true,
-    demoStats: {
-      estimatedCapacity: 110,
+    liveStats: {
+      lastUpdatedAt: new Date(Date.now() - 31 * 60 * 1000).toISOString(),
+      freshnessMinutes: 31,
+      observableRank: 29,
+      totalObservedApplicants: 195,
+      totalCapacity: 110,
       estimatedScholarships: 50,
       scholarshipRatio: 0.45,
       competitionLevel: 'Modéré',
@@ -162,6 +196,12 @@ export const DEMO_PROGRAMMES: DemoProgramme[] = [
       marketDemand: 'Moyenne',
       keySubjects: ['Mathématiques Financières', 'Comptabilité', 'Économie'],
       sampleCareers: ['Gestionnaire de Portefeuille', 'Chargé de Clientèle', 'Analyste Crédit'],
+      categories: [
+        { category: 'Bourses Nationales', allocated: 38, availableTotal: 50, applicantsCount: 98, pressureRatio: 0.76 },
+        { category: 'Demi-Bourses / Aides', allocated: 24, availableTotal: 30, applicantsCount: 52, pressureRatio: 0.80 },
+        { category: 'Frais d’Études / Payant', allocated: 22, availableTotal: 30, applicantsCount: 45, pressureRatio: 0.73 },
+        { category: 'Total Général', allocated: 84, availableTotal: 110, applicantsCount: 195, pressureRatio: 0.76 },
+      ],
     },
   },
   {
@@ -173,8 +213,12 @@ export const DEMO_PROGRAMMES: DemoProgramme[] = [
     description: 'Cycle complet d’études médicales préparant aux diagnostics cliniques, thérapeutiques, chirurgie de base et santé publique.',
     admissibleSeries: ['C', 'D'],
     is_demo: true,
-    demoStats: {
-      estimatedCapacity: 150,
+    liveStats: {
+      lastUpdatedAt: new Date(Date.now() - 5 * 60 * 1000).toISOString(),
+      freshnessMinutes: 5,
+      observableRank: 120,
+      totalObservedApplicants: 820,
+      totalCapacity: 150,
       estimatedScholarships: 45,
       scholarshipRatio: 0.30,
       competitionLevel: 'Très élevé',
@@ -183,6 +227,12 @@ export const DEMO_PROGRAMMES: DemoProgramme[] = [
       marketDemand: 'Forte',
       keySubjects: ['SVT / Biologie', 'Physique-Chimie', 'Mathématiques'],
       sampleCareers: ['Médecin Généraliste', 'Médecin Urgentiste', 'Épidémiologiste'],
+      categories: [
+        { category: 'Bourses Nationales', allocated: 45, availableTotal: 45, applicantsCount: 540, pressureRatio: 1.0 },
+        { category: 'Demi-Bourses / Aides', allocated: 35, availableTotal: 35, applicantsCount: 160, pressureRatio: 1.0 },
+        { category: 'Frais d’Études / Payant', allocated: 68, availableTotal: 70, applicantsCount: 120, pressureRatio: 0.97 },
+        { category: 'Total Général', allocated: 148, availableTotal: 150, applicantsCount: 820, pressureRatio: 0.99 },
+      ],
     },
   },
   {
@@ -194,8 +244,12 @@ export const DEMO_PROGRAMMES: DemoProgramme[] = [
     description: 'Amélioration des rendements agricoles, biotechnologies végétales, gestion intégrée des ravageurs et semences certifiées.',
     admissibleSeries: ['D', 'C'],
     is_demo: true,
-    demoStats: {
-      estimatedCapacity: 80,
+    liveStats: {
+      lastUpdatedAt: new Date(Date.now() - 40 * 60 * 1000).toISOString(),
+      freshnessMinutes: 40,
+      observableRank: 11,
+      totalObservedApplicants: 95,
+      totalCapacity: 80,
       estimatedScholarships: 58,
       scholarshipRatio: 0.72,
       competitionLevel: 'Faible',
@@ -204,6 +258,12 @@ export const DEMO_PROGRAMMES: DemoProgramme[] = [
       marketDemand: 'Forte',
       keySubjects: ['Biologie Végétale', 'Chimie des Sols', 'Agronomie'],
       sampleCareers: ['Spécialiste Phytosanitaire', 'Sélectionneur Végétal', 'Consultant Semencier'],
+      categories: [
+        { category: 'Bourses Nationales', allocated: 36, availableTotal: 58, applicantsCount: 52, pressureRatio: 0.62 },
+        { category: 'Demi-Bourses / Aides', allocated: 8, availableTotal: 12, applicantsCount: 24, pressureRatio: 0.67 },
+        { category: 'Frais d’Études / Payant', allocated: 6, availableTotal: 10, applicantsCount: 19, pressureRatio: 0.60 },
+        { category: 'Total Général', allocated: 50, availableTotal: 80, applicantsCount: 95, pressureRatio: 0.63 },
+      ],
     },
   },
   {
@@ -215,8 +275,12 @@ export const DEMO_PROGRAMMES: DemoProgramme[] = [
     description: 'Formation pédagogique et scientifique pour les futurs professeurs du secondaire en physique et chimie.',
     admissibleSeries: ['C', 'D', 'E'],
     is_demo: true,
-    demoStats: {
-      estimatedCapacity: 60,
+    liveStats: {
+      lastUpdatedAt: new Date(Date.now() - 19 * 60 * 1000).toISOString(),
+      freshnessMinutes: 19,
+      observableRank: 9,
+      totalObservedApplicants: 78,
+      totalCapacity: 60,
       estimatedScholarships: 48,
       scholarshipRatio: 0.80,
       competitionLevel: 'Modéré',
@@ -225,6 +289,12 @@ export const DEMO_PROGRAMMES: DemoProgramme[] = [
       marketDemand: 'Forte',
       keySubjects: ['Physique', 'Chimie', 'Pédagogie'],
       sampleCareers: ['Professeur de Lycée', 'Formateur', 'Conseiller Pédagogique'],
+      categories: [
+        { category: 'Bourses Nationales', allocated: 39, availableTotal: 48, applicantsCount: 58, pressureRatio: 0.81 },
+        { category: 'Demi-Bourses / Aides', allocated: 5, availableTotal: 7, applicantsCount: 12, pressureRatio: 0.71 },
+        { category: 'Frais d’Études / Payant', allocated: 3, availableTotal: 5, applicantsCount: 8, pressureRatio: 0.60 },
+        { category: 'Total Général', allocated: 47, availableTotal: 60, applicantsCount: 78, pressureRatio: 0.78 },
+      ],
     },
   },
   {
@@ -236,8 +306,12 @@ export const DEMO_PROGRAMMES: DemoProgramme[] = [
     description: 'Droit constitutionnel, contentieux administratif, gouvernance locale, marchés publics et décentralisation.',
     admissibleSeries: ['A', 'B', 'D', 'C'],
     is_demo: true,
-    demoStats: {
-      estimatedCapacity: 300,
+    liveStats: {
+      lastUpdatedAt: new Date(Date.now() - 12 * 60 * 1000).toISOString(),
+      freshnessMinutes: 12,
+      observableRank: 84,
+      totalObservedApplicants: 540,
+      totalCapacity: 300,
       estimatedScholarships: 80,
       scholarshipRatio: 0.27,
       competitionLevel: 'Élevé',
@@ -246,6 +320,12 @@ export const DEMO_PROGRAMMES: DemoProgramme[] = [
       marketDemand: 'Moyenne',
       keySubjects: ['Français / Expression', 'Histoire-Géo', 'Philosophie'],
       sampleCareers: ['Attaché d’Administration', 'Juriste Territorial', 'Conseiller Juridique'],
+      categories: [
+        { category: 'Bourses Nationales', allocated: 76, availableTotal: 80, applicantsCount: 290, pressureRatio: 0.95 },
+        { category: 'Demi-Bourses / Aides', allocated: 65, availableTotal: 70, applicantsCount: 130, pressureRatio: 0.93 },
+        { category: 'Frais d’Études / Payant', allocated: 120, availableTotal: 150, applicantsCount: 120, pressureRatio: 0.80 },
+        { category: 'Total Général', allocated: 261, availableTotal: 300, applicantsCount: 540, pressureRatio: 0.87 },
+      ],
     },
   },
   {
@@ -257,8 +337,12 @@ export const DEMO_PROGRAMMES: DemoProgramme[] = [
     description: 'Protection de la biodiversité, aménagement forestier durable, séquestration carbone et écologie tropicale.',
     admissibleSeries: ['D', 'C', 'A'],
     is_demo: true,
-    demoStats: {
-      estimatedCapacity: 70,
+    liveStats: {
+      lastUpdatedAt: new Date(Date.now() - 28 * 60 * 1000).toISOString(),
+      freshnessMinutes: 28,
+      observableRank: 14,
+      totalObservedApplicants: 88,
+      totalCapacity: 70,
       estimatedScholarships: 45,
       scholarshipRatio: 0.64,
       competitionLevel: 'Faible',
@@ -267,6 +351,12 @@ export const DEMO_PROGRAMMES: DemoProgramme[] = [
       marketDemand: 'Émergente',
       keySubjects: ['SVT', 'Écologie', 'Géographie'],
       sampleCareers: ['Conservateur de Parc', 'Chargé d’Études Environnement', 'Expert Carbone'],
+      categories: [
+        { category: 'Bourses Nationales', allocated: 29, availableTotal: 45, applicantsCount: 46, pressureRatio: 0.64 },
+        { category: 'Demi-Bourses / Aides', allocated: 10, availableTotal: 15, applicantsCount: 24, pressureRatio: 0.67 },
+        { category: 'Frais d’Études / Payant', allocated: 5, availableTotal: 10, applicantsCount: 18, pressureRatio: 0.50 },
+        { category: 'Total Général', allocated: 44, availableTotal: 70, applicantsCount: 88, pressureRatio: 0.63 },
+      ],
     },
   },
   {
@@ -278,8 +368,12 @@ export const DEMO_PROGRAMMES: DemoProgramme[] = [
     description: 'Formation des cadres de l’État, gestion publique, éthique républicaine et politiques de développement.',
     admissibleSeries: ['A', 'B', 'C', 'D'],
     is_demo: true,
-    demoStats: {
-      estimatedCapacity: 60,
+    liveStats: {
+      lastUpdatedAt: new Date(Date.now() - 10 * 60 * 1000).toISOString(),
+      freshnessMinutes: 10,
+      observableRank: 55,
+      totalObservedApplicants: 380,
+      totalCapacity: 60,
       estimatedScholarships: 30,
       scholarshipRatio: 0.50,
       competitionLevel: 'Très élevé',
@@ -288,6 +382,12 @@ export const DEMO_PROGRAMMES: DemoProgramme[] = [
       marketDemand: 'Forte',
       keySubjects: ['Culture Générale', 'Droit Administratif', 'Économie'],
       sampleCareers: ['Administrateur Civil', 'Secrétaire Général de Mairie', 'Cadre de Ministère'],
+      categories: [
+        { category: 'Bourses Nationales', allocated: 28, availableTotal: 30, applicantsCount: 210, pressureRatio: 0.93 },
+        { category: 'Demi-Bourses / Aides', allocated: 14, availableTotal: 15, applicantsCount: 95, pressureRatio: 0.93 },
+        { category: 'Frais d’Études / Payant', allocated: 14, availableTotal: 15, applicantsCount: 75, pressureRatio: 0.93 },
+        { category: 'Total Général', allocated: 56, availableTotal: 60, applicantsCount: 380, pressureRatio: 0.93 },
+      ],
     },
   },
 ];

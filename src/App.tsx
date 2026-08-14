@@ -9,6 +9,7 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import { Navbar } from './components/Navbar';
 import { Footer } from './components/Footer';
 import { VerificationModal } from './components/VerificationModal';
+import { BackendManagerModal } from './components/BackendManagerModal';
 import { HomePage } from './pages/HomePage';
 import { LoginPage } from './pages/LoginPage';
 import { RegisterPage } from './pages/RegisterPage';
@@ -23,6 +24,7 @@ function AppContent() {
   const { user, isLoading } = useAuth();
   const [currentRoute, setCurrentRoute] = useState<string>('/');
   const [isTestsModalOpen, setIsTestsModalOpen] = useState(false);
+  const [isBackendModalOpen, setIsBackendModalOpen] = useState(false);
 
   // Synchronisation avec l'historique du navigateur
   useEffect(() => {
@@ -93,6 +95,7 @@ function AppContent() {
         currentRoute={currentRoute}
         navigate={navigate}
         openTestsModal={() => setIsTestsModalOpen(true)}
+        openBackendModal={() => setIsBackendModalOpen(true)}
       />
 
       {/* Vue active */}
@@ -107,6 +110,12 @@ function AppContent() {
       <VerificationModal
         isOpen={isTestsModalOpen}
         onClose={() => setIsTestsModalOpen(false)}
+      />
+
+      {/* Modal de Supervision & Connexion Directe URI Backend */}
+      <BackendManagerModal
+        isOpen={isBackendModalOpen}
+        onClose={() => setIsBackendModalOpen(false)}
       />
     </div>
   );

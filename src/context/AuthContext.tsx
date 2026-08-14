@@ -13,6 +13,7 @@ import {
   isSupabaseConfigured,
   realSupabase,
 } from '../lib/supabase';
+import { BackendApi } from '../lib/backendApi';
 import { UserPreferences, UserProfile } from '../types/orientation';
 
 interface AuthContextType {
@@ -327,9 +328,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       setProfile(updated);
 
+      // 1. Sauvegarde Backend Direct URI
+      await BackendApi.saveProfile(updated as any);
+
+      // 2. Supabase ou LocalStore
       if (isSupabaseLive && realSupabase) {
         const { error } = await realSupabase.from('profiles').upsert(updated);
-        if (error) throw error;
+        if (error) console.warn('Supabase profile sync note:', error.message);
       } else {
         DemoStore.setProfile(updated);
       }
@@ -362,9 +367,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       setPreferences(updated);
 
+      // 1. Sauvegarde Backend Direct URI
+      await BackendApi.savePreferences(user.id, updated);
+
+      // 2. Supabase ou LocalStore
       if (isSupabaseLive && realSupabase) {
         const { error } = await realSupabase.from('user_preferences').upsert(updated);
-        if (error) throw error;
+        if (error) console.warn('Supabase preferences sync note:', error.message);
       } else {
         DemoStore.setPreferences(updated);
       }
