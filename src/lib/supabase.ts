@@ -10,17 +10,26 @@ import { UserPreferences, UserProfile } from '../types/orientation';
 const supabaseUrl = (import.meta as any).env?.VITE_SUPABASE_URL || '';
 const supabaseAnonKey = (import.meta as any).env?.VITE_SUPABASE_ANON_KEY || '';
 
-export const isSupabaseConfigured = Boolean(
+export const isSupabaseConfigured: boolean = Boolean(
   supabaseUrl &&
     supabaseAnonKey &&
     supabaseUrl.startsWith('https://') &&
     supabaseAnonKey.length > 20
 );
 
-// Initialisation réelle si clés disponibles
+export const checkIsSupabaseConfigured = (): boolean => isSupabaseConfigured;
+
 export const realSupabase: SupabaseClient | null = isSupabaseConfigured
   ? createClient(supabaseUrl, supabaseAnonKey)
   : null;
+
+// Proxy sécurisé pour supabase
+export const supabase: SupabaseClient =
+  realSupabase ||
+  createClient(
+    supabaseUrl || 'https://placeholder-project.supabase.co',
+    supabaseAnonKey || 'placeholder-anon-key-00000000000000000000'
+  );
 
 // ============================================================================
 // GESTIONNAIRE D'ÉTAT LOCAL POUR LE MODE DÉMONSTRATION SANS CONFIGURATION

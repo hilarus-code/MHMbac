@@ -22,15 +22,18 @@ import {
   Info,
   SlidersHorizontal,
   Bell,
+  Radio,
 } from 'lucide-react';
 import { ProgrammeCard } from '../components/ProgrammeCard';
+import { LiveProgrammeCard } from '../components/LiveProgrammeCard';
 import { AlertModal } from '../components/AlertModal';
 import { HeroCarousel } from '../components/HeroCarousel';
+import { useLiveProgrammes } from '../hooks/useLiveProgrammes';
 import { DEMO_PROGRAMMES } from '../lib/demoData';
 import { rankProgrammes } from '../lib/ranking';
 import { MHM_PROMOTION_CONFIG } from '../lib/promotion';
 import { useAuth } from '../context/AuthContext';
-import { ScoredProgramme } from '../types/orientation';
+import { ScoredProgramme, ScoredLiveProgramme } from '../types/orientation';
 
 interface HomePageProps {
   navigate: (route: string) => void;
@@ -42,14 +45,36 @@ export const HomePage: React.FC<HomePageProps> = ({ navigate }) => {
   const [alertModalOpen, setAlertModalOpen] = useState(false);
   const [selectedProgrammeForAlert, setSelectedProgrammeForAlert] = useState<ScoredProgramme | null>(null);
 
-  // Classement déterministe en temps réel v1
-  const ranked = rankProgrammes(
+  // Hook temps réel
+  const {
+    liveProgrammes,
+    scoredProgrammes: liveRanked,
+    stats,
+    isRealtimeActive,
+  } = useLiveProgrammes(
+    profile || { series: 'D', mention: 'Bien' },
+    preferences || { primary_goal: 'explorer', career_keywords: ['Informatique', 'Santé', 'Agriculture'] }
+  );
+
+  // Classement déterministe en temps réel démo
+  const demoRanked = rankProgrammes(
     DEMO_PROGRAMMES,
     profile || { series: 'D', mention: 'Bien' },
     preferences || { primary_goal: 'explorer', career_keywords: ['Informatique', 'Santé', 'Agriculture'] }
   );
 
-  const filteredProgrammes = ranked.filter((p) => {
+  const hasLiveData = liveProgrammes.length > 0;
+
+  const filteredLive = liveRanked.filter((p) => {
+    const total = p.programme.total || 1;
+    const sRatio = (p.programme.scholarships + p.programme.aid * 0.5) / total;
+    if (activeFilter === 'bourse') return sRatio >= 0.30;
+    if (activeFilter === 'securite') return p.scoreDetails.competitionIndex <= 50;
+    if (activeFilter === 'carriere') return (p.scoreDetails.careerScore ?? 0) >= 50;
+    return true;
+  });
+
+  const filteredDemo = demoRanked.filter((p) => {
     if (activeFilter === 'bourse') return p.programme.liveStats.scholarshipRatio >= 0.50;
     if (activeFilter === 'securite') return p.programme.liveStats.competitionScore <= 5;
     if (activeFilter === 'carriere') return (p.scoreDetails.careerScore ?? 0) >= 70;
@@ -233,7 +258,11 @@ export const HomePage: React.FC<HomePageProps> = ({ navigate }) => {
           <div>
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 mb-2">
               <Clock className="w-3.5 h-3.5" />
-              <span>Données publiques observées • Mis à jour il y a 14 minutes</span>
+              <span>
+                {stats?.lastObservedAt
+                  ? `Données publiques observées • Mis à jour il y a ${stats.diffMinutes ?? 0} min (${hasLiveData ? liveProgrammes.length : DEMO_PROGRAMMES.length} filières)`
+                  : 'Données publiques observées • Mis à jour en continu'}
+              </span>
             </div>
             <h2 className="text-2xl sm:text-4xl font-serif font-bold text-slate-900 dark:text-white">
               Classement et Jauges en temps réel
@@ -253,7 +282,7 @@ export const HomePage: React.FC<HomePageProps> = ({ navigate }) => {
                   : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
-              Toutes ({DEMO_PROGRAMMES.length})
+              Toutes ({hasLiveData ? filteredLive.length : filteredDemo.length})
             </button>
             <button
               onClick={() => setActiveFilter('bourse')}
@@ -307,13 +336,21 @@ export const HomePage: React.FC<HomePageProps> = ({ navigate }) => {
 
         {/* Grille des cartes de filières enrichies avec « Pourquoi ce score ? » */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredProgrammes.map((p) => (
-            <ProgrammeCard
-              key={p.programme.id}
-              item={p}
-              onOpenAlertModal={handleOpenAlert}
-            />
-          ))}
+          {hasLiveData
+            ? filteredLive.map((p) => (
+                <LiveProgrammeCard
+                  key={p.programme.programme_id}
+                  item={p}
+                  onOpenAlertModal={handleOpenAlert}
+                />
+              ))
+            : filteredDemo.map((p) => (
+                <ProgrammeCard
+                  key={p.programme.id}
+                  item={p}
+                  onOpenAlertModal={handleOpenAlert}
+                />
+              ))}
         </div>
 
         {/* Bannière d'incitation à la personnalisation */}

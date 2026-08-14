@@ -11,9 +11,27 @@
  * 2. AUCUNE soumission automatique de choix à la place de l'élève.
  * 3. AUCUN stockage de mot de passe ni contournement de protection.
  * 4. Validation finale TOUJOURS manuelle par l'élève sur apresmonbac.bj.
+ * 5. Authentification d'envoi par jeton secret MHM_SYNC_TOKEN (entête x-mhm-token).
  */
 
 import { ChromeExtensionSnapshotPayload, ExtensionGaugeEntry } from '../types/orientation';
+
+/**
+ * Modèle de configuration pour l'Extension Chrome (config.js)
+ * Placé à la racine du dossier dézippé de l'extension.
+ */
+export const EXTENSION_SAMPLE_CONFIG_JS = `// config.js — Configuration de l'Extension Chrome MHM SOLUTIONS
+window.MHM_CONFIG = {
+  // Point de terminaison API (Serveur Cloud Run ou Edge Function Supabase)
+  API_URL: "https://votre-domaine.run.app/api/mhmbac-sync",
+  // Jeton de sécurité correspondant à MHM_SYNC_TOKEN côté serveur
+  MHM_SYNC_TOKEN: "votre_jeton_secret_sync_mhmbac",
+  // Fréquence d'actualisation de la jauge publique observée (en ms)
+  OBSERVE_INTERVAL_MS: 60000,
+  // Source et version du contrat d'observation
+  SOURCE: "chrome_extension",
+  EXTENSION_VERSION: "0.3.0"
+};`;
 
 /**
  * Calcule une empreinte de déduplication pour éviter les enregistrements redondants

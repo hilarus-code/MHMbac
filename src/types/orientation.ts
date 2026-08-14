@@ -121,6 +121,117 @@ export interface DomainSuggestion {
 // CONTRATS D'EXTENSION CHROME & SYNCHRONISATION SÉCURISÉE (MHM SOLUTIONS)
 // ============================================================================
 
+export interface LiveProgramme {
+  id?: string;
+  programme_id: number;
+  university_id?: number;
+  university: string;
+  school_id?: number;
+  school: string;
+  programme: string;
+  domain?: string;
+  scholarships: number;
+  aid: number;
+  tb: number;
+  b: number;
+  ab: number;
+  passable: number;
+  total: number;
+  rank?: number | null;
+  capacity?: number | null;
+  applicants?: number | null;
+  raw_gauge?: Record<string, unknown> | null;
+  score_version?: string;
+  score_opportunity?: number;
+  score_scholarship?: number;
+  score_admission?: number;
+  score_confidence?: 'Élevé' | 'Moyen' | 'Limité';
+  factors?: ScoreFactor[];
+  source?: string;
+  observed_at: string;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface LiveGaugeSnapshotItem {
+  universityId?: number;
+  university: string;
+  schoolId?: number;
+  school: string;
+  programmeId: number;
+  programme: string;
+  scholarships: number;
+  aid: number;
+  tb: number;
+  b: number;
+  ab: number;
+  passable: number;
+  total: number;
+  rank?: number | null;
+  capacity?: number | null;
+  applicants?: number | null;
+  rawGauge?: Record<string, unknown> | null;
+  observedAt?: string;
+}
+
+export interface MhmExtensionSyncPayload {
+  schemaVersion?: string; // 'mhm-extension.v1'
+  batchId: string;
+  source: string; // 'chrome_extension'
+  extensionVersion?: string;
+  scoreVersion?: string;
+  series?: BacSeries | string;
+  criteria?: {
+    mention?: BacMention | string;
+    goal?: PrimaryGoal | string;
+    careerKeywords?: string;
+  };
+  observedAt: string;
+  items: LiveGaugeSnapshotItem[];
+}
+
+export interface GaugeAlert {
+  id: string;
+  programme_id: number;
+  university: string;
+  school: string;
+  programme: string;
+  field_name: string;
+  old_value: number | null;
+  new_value: number | null;
+  delta: number | null;
+  batch_id?: string;
+  observed_at: string;
+  created_at?: string;
+}
+
+export interface SyncBatch {
+  id: string;
+  batch_id: string;
+  source: string;
+  extension_version?: string;
+  series?: string;
+  criteria?: Record<string, unknown>;
+  received_count: number;
+  updated_count: number;
+  alert_count: number;
+  status: 'completed' | 'partial' | 'failed';
+  error_message?: string;
+  observed_at: string;
+  created_at?: string;
+}
+
+export interface ScoredLiveProgramme {
+  programme: LiveProgramme;
+  score: number; // 0 à 100
+  scoreDetails: OpportunityScoreDetails;
+  badge: {
+    label: string;
+    variant: 'emerald' | 'rose' | 'indigo' | 'amber';
+  };
+  reasons: string[];
+}
+
 export interface ExtensionGaugeEntry {
   category_name: string;
   capacity: number | null;
@@ -149,12 +260,15 @@ export interface ChromeExtensionSnapshotPayload {
 
 export interface GaugeObservation {
   id: string;
-  programme_id: string;
-  source: 'chrome_extension' | 'n8n_crawler' | 'manual_sync';
-  scholarship_ratio: number;
-  competition_index: number;
-  raw_payload?: Record<string, unknown>;
-  recorded_at: string;
+  programme_id: number | string;
+  batch_id?: string;
+  snapshot_hash?: string;
+  source: string;
+  scholarship_ratio?: number;
+  competition_index?: number;
+  payload?: Record<string, unknown>;
+  observed_at: string;
+  created_at?: string;
 }
 
 export interface RegistrationHistoryEntry {

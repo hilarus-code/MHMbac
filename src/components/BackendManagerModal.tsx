@@ -332,12 +332,41 @@ export const BackendManagerModal: React.FC<BackendManagerModalProps> = ({ isOpen
             )}
           </div>
 
+          {/* Configuration Extension Chrome & Jeton MHM_SYNC_TOKEN */}
+          <div className="bg-slate-800/30 border border-slate-800 rounded-xl p-4 space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="font-medium text-white text-sm flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-amber-400" />
+                Extension Chrome & Jeton de Sécurité MHM_SYNC_TOKEN
+              </span>
+              <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-300 border border-amber-500/20">
+                Synchronisation Réelle
+              </span>
+            </div>
+            <p className="text-xs text-slate-300">
+              Pour synchroniser les jauges publiques capturées sur <code>apresmonbac.bj</code>, configurez le fichier <code>config.js</code> à la racine de l'extension avec le jeton <code>MHM_SYNC_TOKEN</code> :
+            </p>
+            <pre className="p-3 bg-slate-950 border border-slate-800 rounded-lg text-[11px] font-mono text-emerald-300 overflow-x-auto">
+{`// config.js (Extension Chrome MHM SOLUTIONS)
+window.MHM_CONFIG = {
+  API_URL: "${window.location.origin}/api/mhmbac-sync",
+  MHM_SYNC_TOKEN: "votre_jeton_secret_sync_mhmbac",
+  OBSERVE_INTERVAL_MS: 30000,
+  SOURCE: "chrome_extension",
+  EXTENSION_VERSION: "0.3.0"
+};`}
+            </pre>
+            <div className="text-[11px] text-slate-400">
+              Le serveur et la fonction Edge <code>mhmbac-sync</code> vérifient l'entête <code>x-mhm-token</code> avec <code>MHM_SYNC_TOKEN</code>.
+            </div>
+          </div>
+
           {/* Action : Initialisation du Schéma SQL */}
           <div className="flex items-center justify-between p-4 bg-slate-950/40 border border-slate-800 rounded-xl">
             <div>
               <h4 className="font-medium text-white text-xs">Schéma & Tables SQL Automatiques</h4>
               <p className="text-[11px] text-slate-400">
-                Crée ou met à jour les tables (profiles, user_preferences, demo_programmes) et injecte le jeu de données initial béninois.
+                Crée ou met à jour les tables (profiles, user_preferences, live_programmes, gauge_observations, gauge_alerts) et injecte le jeu de données réelles béninoises.
               </p>
             </div>
             <button
